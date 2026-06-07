@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useAuth } from '../context/AuthContext';
+import { useAuth, authHeaders } from '../context/AuthContext';
 
 const API = import.meta.env.VITE_API_URL;
 const REGIONS = [
@@ -22,7 +22,7 @@ export default function RegionSelect() {
     if (!selected) return;
     setLoading(true);
     try {
-      const res = await axios.post(`${API}/auth/region`, { region: selected }, { withCredentials: true });
+      const res = await axios.post(`${API}/auth/region`, { region: selected }, authHeaders());
       updateUser(res.data);
       navigate('/hub');
     } catch (err) {
@@ -60,7 +60,8 @@ export default function RegionSelect() {
               background: selected === r.name ? 'rgba(245,197,24,0.1)' : 'rgba(255,255,255,0.04)',
               border: selected === r.name ? '1px solid #F5C518' : '1px solid rgba(255,255,255,0.08)',
               borderRadius: '8px', padding: '10px 14px', fontSize: '13px', cursor: 'pointer',
-              textAlign: 'left', color: '#f0f0f0', display: 'flex', alignItems: 'center', gap: '8px'
+              textAlign: 'left', color: '#f0f0f0', display: 'flex', alignItems: 'center', gap: '8px',
+              fontFamily: 'inherit'
             }}>
               <span>{r.flag}</span> {r.name}
             </button>
@@ -70,7 +71,7 @@ export default function RegionSelect() {
           background: selected ? '#F5C518' : 'rgba(245,197,24,0.3)',
           color: '#000', border: 'none', borderRadius: '8px', padding: '11px',
           fontSize: '13px', fontWeight: 700, cursor: selected ? 'pointer' : 'not-allowed',
-          width: '100%'
+          width: '100%', fontFamily: 'inherit'
         }}>
           {loading ? 'Joining...' : 'Join the competition →'}
         </button>

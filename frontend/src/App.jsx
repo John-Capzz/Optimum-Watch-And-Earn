@@ -4,6 +4,7 @@ import Login from './pages/Login';
 import RegionSelect from './pages/RegionSelect';
 import Hub from './pages/Hub';
 import Admin from './pages/Admin';
+import AuthCallback from './pages/AuthCallback';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -34,6 +35,7 @@ function AppRoutes() {
       <Route path="/region" element={<RegionRoute><RegionSelect /></RegionRoute>} />
       <Route path="/hub" element={<ProtectedRoute><Hub /></ProtectedRoute>} />
       <Route path="*" element={<Navigate to={user ? '/hub' : '/login'} />} />
+      <Route path="/auth/callback" element={<AuthCallback />} />
       <Route path="/admin" element={<Admin />} />
     </Routes>
   );

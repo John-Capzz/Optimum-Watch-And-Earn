@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useAuth } from '../context/AuthContext';
+import { useAuth, authHeaders } from '../context/AuthContext';
 
 const API = import.meta.env.VITE_API_URL;
 
@@ -10,7 +10,7 @@ export default function Profile() {
 
   useEffect(() => {
     if (user?._id) {
-      axios.get(`${API}/api/quiz/history/${user._id}`, { withCredentials: true })
+      axios.get(`${API}/api/quiz/history/${user._id}`, authHeaders())
         .then(res => setHistory(res.data))
         .catch(console.error);
     }
@@ -22,7 +22,7 @@ export default function Profile() {
     <div style={{ padding: '16px 18px' }}>
       <div style={{ background: '#1e1e1e', border: '1px solid rgba(245,197,24,0.15)', borderRadius: '11px', padding: '16px', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '14px' }}>
         <div style={{ width: '54px', height: '54px', borderRadius: '50%', background: '#5865F2', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', fontWeight: 700, color: '#fff', border: '3px solid #F5C518', overflow: 'hidden', flexShrink: 0 }}>
-          {user?.avatar ? <img src={user.avatar} style={{ width: '100%', height: '100%' }} /> : user?.username?.slice(0, 2).toUpperCase()}
+          {user?.avatar ? <img src={user.avatar} style={{ width: '100%', height: '100%' }} alt="av" /> : user?.username?.slice(0, 2).toUpperCase()}
         </div>
         <div>
           <div style={{ fontSize: '16px', fontWeight: 600 }}>{user?.username}</div>

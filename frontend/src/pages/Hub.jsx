@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useAuth } from '../context/AuthContext';
+import { useAuth, authHeaders } from '../context/AuthContext';
 import Topbar from '../components/Topbar';
 import SubscribeBar from '../components/SubscribeBar';
 import VideoGrid from '../components/VideoGrid';
@@ -18,7 +18,7 @@ export default function Hub() {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   useEffect(() => {
-    axios.get(`${API}/api/videos`, { withCredentials: true })
+    axios.get(`${API}/api/videos`, authHeaders())
       .then(res => setVideos(res.data))
       .catch(console.error);
   }, []);

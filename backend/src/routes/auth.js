@@ -1,6 +1,7 @@
 import express from 'express';
 import passport from 'passport';
 import { Strategy as DiscordStrategy } from 'passport-discord';
+import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -40,22 +41,35 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
+const authMiddleware = async (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) return res.status(401).json({ error: 'Not authenticated' });
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id);
+    if (!user) return res.status(401).json({ error: 'User not found' });
+    req.user = user;
+    next();
+  } catch (err) {
+    res.status(401).json({ error: 'Invalid token' });
+  }
+};
+
 router.get('/discord', passport.authenticate('discord'));
 
 router.get('/discord/callback',
-  passport.authenticate('discord', { failureRedirect: `${process.env.CLIENT_URL}/login` }),
+  passport.authenticate('discord', { session: false, failureRedirect: `${process.env.CLIENT_URL}/login` }),
   (req, res) => {
-    res.redirect(`${process.env.CLIENT_URL}/region`);
+    const token = jwt.sign({ id: req.user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    res.redirect(`${process.env.CLIENT_URL}/auth/callback?token=${token}`);
   }
 );
 
-router.get('/me', (req, res) => {
-  if (!req.user) return res.status(401).json({ error: 'Not authenticated' });
+router.get('/me', authMiddleware, (req, res) => {
   res.json(req.user);
 });
 
-router.post('/region', async (req, res) => {
-  if (!req.user) return res.status(401).json({ error: 'Not authenticated' });
+router.post('/region', authMiddleware, async (req, res) => {
   const { region } = req.body;
   const allowed = ['West Africa', 'East Africa', 'UK & Europe', 'North America', 'Diaspora'];
   if (!allowed.includes(region)) return res.status(400).json({ error: 'Invalid region' });
@@ -71,8 +85,7 @@ router.post('/region', async (req, res) => {
   }
 });
 
-router.post('/subscribe', async (req, res) => {
-  if (!req.user) return res.status(401).json({ error: 'Not authenticated' });
+router.post('/subscribe', authMiddleware, async (req, res) => {
   try {
     if (req.user.subscribed) return res.json({ message: 'Already subscribed', user: req.user });
     const user = await User.findByIdAndUpdate(
@@ -87,7 +100,8 @@ router.post('/subscribe', async (req, res) => {
 });
 
 router.get('/logout', (req, res) => {
-  req.logout(() => res.redirect(process.env.CLIENT_URL));
+  res.redirect(process.env.CLIENT_URL);
 });
 
+export { authMiddleware };
 export default router;

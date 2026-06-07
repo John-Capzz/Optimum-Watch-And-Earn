@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { useAuth } from '../context/AuthContext';
+import { useAuth, authHeaders } from '../context/AuthContext';
 
 const API = import.meta.env.VITE_API_URL;
 
@@ -29,6 +29,7 @@ export default function QuizEngine({ video, watchSecs, gate, onComplete }) {
   }, [watchSecs, gate, phase]);
 
   const startQuiz = () => {
+    if (questions.length === 0) return;
     setPhase('quiz');
     setCurrentQ(0);
     setSelected(null);
@@ -70,7 +71,7 @@ export default function QuizEngine({ video, watchSecs, gate, onComplete }) {
           videoId: video._id,
           answers: finalAnswers,
           timings: finalTimings,
-        }, { withCredentials: true });
+        }, authHeaders());
         setResult(res.data);
         setPhase('result');
         if (res.data.isFirstAttempt) {
@@ -87,7 +88,6 @@ export default function QuizEngine({ video, watchSecs, gate, onComplete }) {
     }
   };
 
-  // Result screen
   if (phase === 'result' && result) {
     return (
       <div style={{ padding: '20px', textAlign: 'center' }}>
@@ -129,7 +129,6 @@ export default function QuizEngine({ video, watchSecs, gate, onComplete }) {
     );
   }
 
-  // Quiz screen
   if (phase === 'quiz') {
     const q = questions[currentQ];
     return (
@@ -210,7 +209,6 @@ export default function QuizEngine({ video, watchSecs, gate, onComplete }) {
     );
   }
 
-  // Waiting / unlocked state
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px 14px', textAlign: 'center', gap: '8px' }}>
       <div style={{
@@ -226,9 +224,11 @@ export default function QuizEngine({ video, watchSecs, gate, onComplete }) {
       <div style={{ fontSize: '11px', color: '#777', lineHeight: 1.6, maxWidth: '280px' }}>
         {phase === 'unlocked'
           ? 'You can keep watching or start the quiz now. 20 seconds per question.'
-          : `Watch at least ${Math.floor(gate / 60)} minutes to unlock the quiz. Keep watching after — start when ready.`}
+          : questions.length === 0
+            ? 'No quiz questions have been added for this video yet. Check back soon!'
+            : `Watch at least ${Math.floor(gate / 60)} minutes to unlock the quiz.`}
       </div>
-      {phase === 'unlocked' && (
+      {phase === 'unlocked' && questions.length > 0 && (
         <button onClick={startQuiz} style={{
           background: '#F5C518', color: '#000', border: 'none', borderRadius: '8px',
           padding: '10px 24px', fontSize: '13px', fontWeight: 700, cursor: 'pointer',

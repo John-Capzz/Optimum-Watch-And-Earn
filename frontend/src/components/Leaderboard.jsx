@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useAuth } from '../context/AuthContext';
+import { useAuth, authHeaders } from '../context/AuthContext';
 
 const API = import.meta.env.VITE_API_URL;
 
@@ -9,7 +9,7 @@ export default function Leaderboard() {
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    axios.get(`${API}/api/quiz/leaderboard`, { withCredentials: true })
+    axios.get(`${API}/api/quiz/leaderboard`, authHeaders())
       .then(res => setData(res.data))
       .catch(console.error);
   }, []);
@@ -69,7 +69,7 @@ export default function Leaderboard() {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#5865F2', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '9px', fontWeight: 700, color: '#fff', overflow: 'hidden', flexShrink: 0 }}>
-                {s.user?.avatar ? <img src={s.user.avatar} style={{ width: '100%', height: '100%' }} /> : s.user?.username?.slice(0, 2).toUpperCase()}
+                {s.user?.avatar ? <img src={s.user.avatar} style={{ width: '100%', height: '100%' }} alt="av" /> : s.user?.username?.slice(0, 2).toUpperCase()}
               </div>
               <div>
                 <div style={{ fontSize: '11px', fontWeight: 500 }}>{s.user?.username}</div>

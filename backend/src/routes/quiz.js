@@ -2,13 +2,12 @@ import express from 'express';
 import Score from '../models/Score.js';
 import Video from '../models/Video.js';
 import User from '../models/User.js';
+import { authMiddleware } from './auth.js';
 
 const router = express.Router();
 
-router.post('/submit', async (req, res) => {
-  if (!req.user) return res.status(401).json({ error: 'Not authenticated' });
+router.post('/submit', authMiddleware, async (req, res) => {
   const { videoId, answers, timings } = req.body;
-
   try {
     const video = await Video.findById(videoId);
     if (!video) return res.status(404).json({ error: 'Video not found' });
@@ -86,7 +85,7 @@ router.get('/leaderboard', async (req, res) => {
   }
 });
 
-router.get('/history/:userId', async (req, res) => {
+router.get('/history/:userId', authMiddleware, async (req, res) => {
   try {
     const scores = await Score.find({ userId: req.params.userId, isFirstAttempt: true })
       .populate('videoId', 'title youtubeId')

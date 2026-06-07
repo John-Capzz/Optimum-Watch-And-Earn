@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { useAuth } from '../context/AuthContext';
+import { useAuth, authHeaders } from '../context/AuthContext';
 
 const API = import.meta.env.VITE_API_URL;
 
@@ -21,9 +21,9 @@ export default function SubscribeBar() {
   }
 
   const handleSubscribe = async () => {
-    window.open('https://www.youtube.com/@getoptimum', '_blank');
+    window.open('https://youtube.com/@OptimumYT', '_blank');
     try {
-      const res = await axios.post(`${API}/auth/subscribe`, {}, { withCredentials: true });
+      const res = await axios.post(`${API}/auth/subscribe`, {}, authHeaders());
       updateUser(res.data.user);
       setDone(true);
     } catch (err) {
