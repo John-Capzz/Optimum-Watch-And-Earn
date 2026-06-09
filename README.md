@@ -106,6 +106,7 @@ Open `http://localhost:5174`
 
 ## 📁 Project Structure
 
+```
 optimum-watch-earn/
 ├── backend/
 │   └── src/
@@ -117,11 +118,14 @@ optimum-watch-earn/
 │       └── index.js       # Express app entry point
 │
 └── frontend/
-└── src/
-├── components/    # Topbar, VideoGrid, VideoModal, QuizEngine, Leaderboard, Profile
-├── pages/         # Login, RegionSelect, Hub, Admin, AuthCallback
-├── context/       # AuthContext with JWT management
-└── App.jsx        # Routes
+    └── src/
+        ├── components/    # Topbar, VideoGrid, VideoModal, QuizEngine, Leaderboard, Profile
+        ├── pages/         # Login, RegionSelect, Hub, Admin, AuthCallback
+        ├── context/       # AuthContext with JWT management
+        └── App.jsx        # Routes
+```
+
+
 
 ---
 
