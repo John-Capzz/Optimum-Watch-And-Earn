@@ -21,7 +21,7 @@ export default function SubscribeBar() {
   }
 
   const handleSubscribe = async () => {
-    window.open('https://youtube.com/@OptimumYT', '_blank');
+    window.open('https://youtube.com/@getoptimum', '_blank');
     try {
       const res = await axios.post(`${API}/auth/subscribe`, {}, authHeaders());
       updateUser(res.data.user);

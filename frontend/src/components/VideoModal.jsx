@@ -54,7 +54,7 @@ export default function VideoModal({ video, onClose, index = 0 }) {
   };
 
   const handleSubscribe = async () => {
-    window.open('https://youtube.com/@OptimumYT', '_blank');
+    window.open('https://youtube.com/@getoptimum', '_blank');
     setSubLoading(true);
     try {
       const res = await axios.post(`${API}/auth/subscribe`, {}, authHeaders());
